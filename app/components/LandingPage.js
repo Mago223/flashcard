@@ -1,8 +1,33 @@
+'use client';
 import Link from 'next/link';
+import getStripe from "@/utils/get-stripe";
 import backgroundImage from './../images/study_flashcards_people_cartoon_xl_1024.png';
 import { Box, Typography, Container, Button, Grid } from '@mui/material';
 
 export default function LandingPage() {
+    const handleSubmit = async () => {
+        const checkoutSession = await fetch("/api/checkout_session",{
+            method: "POST",
+            headers: {
+                origin: 'http://localhost:3000',
+            },
+        });
+
+        const checkoutSessionJSON = await checkoutSession.json();
+
+        if(checkoutSession.statusCode === 500){
+            console.error(checkoutSessionJSON.message);
+        }
+
+        const stripe = await getStripe();
+        const {error} = await stripe.redirectToCheckout({
+            sessionId: checkoutSessionJSON.id,
+        });
+
+        if (error){
+            console.warn(error.message);
+        }
+    }
     return (
         <Box>
             {/* Background Image Container */}
@@ -125,7 +150,7 @@ export default function LandingPage() {
                                 <Typography variant="h5" sx={{ mb: 2 }}>Pro</Typography>
                                 <Typography variant="h6" sx={{ mb: 2 }}>$10 / month</Typography>
                                 <Typography>Unlimited flashcards and storage with priority support</Typography>
-                                <Button variant="contained" color="primary" sx={{ mt: 2 }}>Choose Pro</Button>
+                                <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleSubmit}>Choose Pro</Button>
                             </Box>
                         </Grid>
                     </Grid>
