@@ -36,7 +36,6 @@ export default function Generate(){
                 console.log('Text file content:', content);
             } else if (fileType === 'application/pdf') {
                 // Read PDF files as ArrayBuffer
-                console.log(e.target.result);
                 content = await pdfToText(file);
                 console.log('Extracted text from PDF:', content);
             } else if (fileType.startsWith('image/')) {
