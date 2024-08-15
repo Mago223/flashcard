@@ -44,7 +44,7 @@ export default function Generate(){
                 alert("Unsupported file type");
             }
 
-            fetch('api/generate', {
+            fetch('api/generate_many', {
                 method: 'POST',
                 body: content
             })
@@ -55,7 +55,7 @@ export default function Generate(){
     }
 
     const handleSubmit = async () => {
-        fetch('api/generate', {
+        fetch('api/generate_many', {
             method: 'POST',
             body: text
         })
