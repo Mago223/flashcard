@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { db } from "@/firebase";
 import { doc, collection, setDoc, getDoc, writeBatch } from "firebase/firestore";
+import { PDFDocument } from 'pdf-lib';
+import pdfToText from 'react-pdftotext'
 
 export default function Generate(){
     const {isLoaded, isSignedIn, user} = useUser();
@@ -14,6 +16,44 @@ export default function Generate(){
     const [name, setName] = useState("");
     const [open, setOpen] = useState(false);
     const router = useRouter();
+
+    const handleFileUpload = async () => {
+        const file = document.querySelector('input[type=file]').files[0];
+
+        if (!file) {
+            alert('No file selected!');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const fileType = file.type;
+            let content;
+            
+            if (fileType.startsWith('text/')) {
+                // Read text files as text
+                const content = e.target.result;
+                console.log('Text file content:', content);
+            } else if (fileType === 'application/pdf') {
+                // Read PDF files as ArrayBuffer
+                console.log(e.target.result);
+                content = await pdfToText(file);
+                console.log('Extracted text from PDF:', content);
+            } else if (fileType.startsWith('image/')) {
+                alert("Cannot upload images at this time");
+            } else {
+                alert("Unsupported file type");
+            }
+
+            fetch('api/generate', {
+                method: 'POST',
+                body: content
+            })
+            .then((res)=>res.json())
+            .then((data) => setFlashcards(data))
+        }
+        reader.readAsText(file);
+    }
 
     const handleSubmit = async () => {
         fetch('api/generate', {
@@ -90,6 +130,15 @@ export default function Generate(){
                 variant="outlined"
                 sx={{mb: 2}}/>
                 <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>Generate</Button>
+                <input
+                type="file"
+                id="fileInput"
+                style={{ display: 'none' }}
+                onChange={handleFileUpload}
+            />
+            <Button variant="contained" color="primary" onClick={() => document.getElementById('fileInput').click()} fullWidth sx={{mt: 2}}>
+                Upload File
+            </Button>
             </Paper>
         </Box>
 
