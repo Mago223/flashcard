@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.631.0",
     "@clerk/nextjs": "^5.3.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
