@@ -45,12 +45,15 @@ export default function Generate() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/signin");
+      }
       setUser(user);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const handleFileUpload = async () => {
     const file = document.querySelector("input[type=file]").files[0];
@@ -79,24 +82,24 @@ export default function Generate() {
         return;
       }
 
-            fetch('api/generate_many', {
-                method: 'POST',
-                body: content
-            })
-            .then((res)=>res.json())
-            .then((data) => setFlashcards(data))
-        }
-        reader.readAsText(file);
-    }
+      fetch("api/generate_many", {
+        method: "POST",
+        body: content,
+      })
+        .then((res) => res.json())
+        .then((data) => setFlashcards(data));
+    };
+    reader.readAsText(file);
+  };
 
-    const handleSubmit = async () => {
-        fetch('api/generate_many', {
-            method: 'POST',
-            body: text
-        })
-        .then((res)=>res.json())
-        .then((data) => setFlashcards(data))
-    }
+  const handleSubmit = async () => {
+    fetch("api/generate_many", {
+      method: "POST",
+      body: text,
+    })
+      .then((res) => res.json())
+      .then((data) => setFlashcards(data));
+  };
 
   const handleCardClick = (id) => {
     setFlipped((prev) => ({

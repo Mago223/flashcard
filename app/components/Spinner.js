@@ -11,23 +11,23 @@ const Spinner = () => {
       alignItems="center"
       minHeight="100vh"
       sx={{
-        background:
-          "linear-gradient(179.4deg, rgb(253, 240, 233) 2.2%, rgb(255, 194, 203) 96.2%)",
+        backgroundColor: "#121212", // Dark background to match the theme
+        color: "white",
       }}
     >
       <Box
-        bgcolor="rgba(255, 255, 255, 0.9)"
+        bgcolor="#242424" // Dark background for the spinner container
         borderRadius="24px"
         p={4}
         sx={{
-          boxShadow: "0px 8px 30px rgba(244, 141, 180, 0.2)",
+          boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.5)", // Darker shadow
         }}
       >
         <CircularProgress
           size={60}
           thickness={4}
           sx={{
-            color: "#f48db4",
+            color: "#1DB954", // Use the primary color from the theme
           }}
         />
       </Box>

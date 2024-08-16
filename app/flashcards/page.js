@@ -22,12 +22,15 @@ export default function Flashcards() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/signin");
+      }
       setUser(user);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     async function getFlashcards() {
@@ -52,7 +55,7 @@ export default function Flashcards() {
   }
 
   if (!user) {
-    router.push("/login");
+    router.push("/signin");
     return null;
   }
 
