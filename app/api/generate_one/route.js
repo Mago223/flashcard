@@ -34,7 +34,7 @@ Return in the following JSON format:
     ]
 }
 
-Please do not include any extra newlines or words. Only return the flashcard as shown above.
+Please do not include any extra newlines or words. Only return the flashcard as shown above
 `;
 
 export async function POST(req) {
