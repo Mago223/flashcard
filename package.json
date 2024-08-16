@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^5.3.1",
+    "@aws-sdk/client-bedrock-runtime": "^3.631.0",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
     "@stripe/stripe-js": "^4.2.0",
     "firebase": "^10.12.5",
+    "framer-motion": "^11.3.28",
     "fs": "^0.0.1-security",
     "next": "14.2.5",
     "openai": "^4.55.6",
