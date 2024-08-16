@@ -79,24 +79,24 @@ export default function Generate() {
         return;
       }
 
-      fetch("api/generate", {
-        method: "POST",
-        body: content,
-      })
-        .then((res) => res.json())
-        .then((data) => setFlashcards(data));
-    };
-    reader.readAsText(file);
-  };
+            fetch('api/generate_many', {
+                method: 'POST',
+                body: content
+            })
+            .then((res)=>res.json())
+            .then((data) => setFlashcards(data))
+        }
+        reader.readAsText(file);
+    }
 
-  const handleSubmit = async () => {
-    fetch("api/generate", {
-      method: "POST",
-      body: text,
-    })
-      .then((res) => res.json())
-      .then((data) => setFlashcards(data));
-  };
+    const handleSubmit = async () => {
+        fetch('api/generate_many', {
+            method: 'POST',
+            body: text
+        })
+        .then((res)=>res.json())
+        .then((data) => setFlashcards(data))
+    }
 
   const handleCardClick = (id) => {
     setFlipped((prev) => ({
