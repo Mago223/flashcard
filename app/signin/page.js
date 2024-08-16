@@ -14,7 +14,6 @@ import { LockOutlined, EmailOutlined } from "@mui/icons-material";
 import Link from "next/link";
 import { auth } from "../../firebase";
 import { useRouter } from "next/navigation";
-
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 function Signin() {
@@ -27,8 +26,7 @@ function Signin() {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Redirect to home page after successful login
-        router.push("/generate");
+        router.push("/");
       })
       .catch((error) => {
         setError(error.message);
@@ -44,8 +42,7 @@ function Signin() {
       justifyContent="center"
       alignItems="center"
       sx={{
-        background:
-          "linear-gradient(179.4deg, rgb(22, 22, 22) 2.2%, rgb(30, 30, 30) 96.2%)",
+        background: "linear-gradient(to bottom, #121212, #181818)",
         fontFamily: "'Poppins', sans-serif",
       }}
     >
@@ -63,11 +60,11 @@ function Signin() {
             border: "1px solid #333",
             borderRadius: "24px",
             p: 4,
-            bgcolor: "rgba(40, 40, 40, 0.95)",
+            bgcolor: "rgba(24, 24, 24, 0.95)",
             boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.5)",
           }}
         >
-          <Avatar sx={{ bgcolor: "#4A90E2", mb: 2 }}>
+          <Avatar sx={{ bgcolor: "#1DB954", mb: 2 }}>
             <LockOutlined />
           </Avatar>
           <Typography
@@ -98,23 +95,23 @@ function Signin() {
               onChange={(e) => setEmail(e.target.value)}
               InputProps={{
                 startAdornment: (
-                  <EmailOutlined sx={{ color: "#4A90E2", mr: 1 }} />
+                  <EmailOutlined sx={{ color: "#1DB954", mr: 1 }} />
                 ),
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "20px",
-                  bgcolor: "#333",
+                  bgcolor: "#242424",
                   color: "#E0E0E0",
                   "&.Mui-focused fieldset": {
-                    borderColor: "#4A90E2",
+                    borderColor: "#1DB954",
                   },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "#A0A0A0",
+                  color: "#b0bec5",
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#4A90E2",
+                  color: "#1DB954",
                 },
               }}
             />
@@ -132,23 +129,23 @@ function Signin() {
               onChange={(e) => setPassword(e.target.value)}
               InputProps={{
                 startAdornment: (
-                  <LockOutlined sx={{ color: "#4A90E2", mr: 1 }} />
+                  <LockOutlined sx={{ color: "#1DB954", mr: 1 }} />
                 ),
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "20px",
-                  bgcolor: "#333",
+                  bgcolor: "#242424",
                   color: "#E0E0E0",
                   "&.Mui-focused fieldset": {
-                    borderColor: "#4A90E2",
+                    borderColor: "#1DB954",
                   },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "#A0A0A0",
+                  color: "#b0bec5",
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#4A90E2",
+                  color: "#1DB954",
                 },
               }}
             />
@@ -161,15 +158,14 @@ function Signin() {
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
               component={motion.button}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               sx={{
                 borderRadius: "20px",
-                backgroundColor: "#4A90E2",
+                backgroundColor: "#1DB954",
                 "&:hover": {
-                  backgroundColor: "#357ABD",
+                  backgroundColor: "#1aa34a",
                 },
                 padding: "12px",
                 fontSize: "1.1rem",
@@ -182,13 +178,13 @@ function Signin() {
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
-                <Typography variant="body1" color="#A0A0A0">
+                <Typography variant="body1" color="#b0bec5">
                   Don&apos;t have an account?{" "}
                   <MuiLink
                     component={Link}
                     href="/signup"
                     sx={{
-                      color: "#4A90E2",
+                      color: "#1DB954",
                       textDecoration: "none",
                       fontWeight: "bold",
                       "&:hover": {

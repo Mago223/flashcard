@@ -36,7 +36,7 @@ function Signup() {
         // Update the user's display name
         updateProfile(user, { displayName: fullName })
           .then(() => {
-            router.push("/generate");
+            router.push("/");
           })
           .catch((error) => {
             setError(error.message);

@@ -7,6 +7,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  Grid,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,7 +17,7 @@ import { motion } from "framer-motion";
 
 export default function ProductPage() {
   const [currentPlan, setCurrentPlan] = useState("");
-  const [fullName, setFullName] = useState(""); // Store the full name
+  const [fullName, setFullName] = useState("");
   const router = useRouter();
 
   const handleNavigation = (path) => {
@@ -26,8 +27,7 @@ export default function ProductPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // TODO:
-        // Fetch current plan in async function
+        // TODO: Fetch current plan in async function
         const plan = "";
         setCurrentPlan(plan);
         setFullName(user.displayName || "User");
@@ -36,16 +36,14 @@ export default function ProductPage() {
       }
     });
 
-    // TODO:
-    // Call async function
+    // TODO: Call async function
 
     return () => unsubscribe();
   }, [router]);
 
   const handlePlanChange = async (newPlan) => {
     try {
-      // TODO:
-      // update plan via API
+      // TODO: update plan via API
       setCurrentPlan(newPlan);
       alert("Plan updated successfully");
     } catch (error) {
@@ -76,9 +74,10 @@ export default function ProductPage() {
 
   return (
     <Container
-      maxWidth="100vw"
+      maxWidth={false}
+      disableGutters
       sx={{
-        backgroundColor: "#121212",
+        background: "linear-gradient(to bottom, #121212, #181818)",
         color: "white",
         minHeight: "100vh",
         p: 2,
@@ -89,14 +88,11 @@ export default function ProductPage() {
         justifyContent="space-between"
         alignItems="center"
         p={2}
-        sx={{ boxShadow: 1, borderRadius: 1 }}
+        sx={{ borderBottom: "1px solid #333" }}
       >
-        {/* Company Name */}
         <Typography variant="h6" fontWeight="bold">
-          Flashcard SaaS
+          Memora AI
         </Typography>
-
-        {/* Firebase-based Auth User */}
         <Box display="flex" alignItems="center" gap={2}>
           <Typography variant="body1" fontWeight="bold">
             {fullName}
@@ -105,9 +101,9 @@ export default function ProductPage() {
             variant="outlined"
             onClick={handleSignOut}
             sx={{
-              color: "white",
-              borderColor: "white",
-              "&:hover": { borderColor: "#1DB954", color: "#1DB954" },
+              color: "#1DB954",
+              borderColor: "#1DB954",
+              "&:hover": { borderColor: "#1aa34a", color: "#1aa34a" },
             }}
           >
             Sign Out
@@ -115,127 +111,103 @@ export default function ProductPage() {
         </Box>
       </Box>
 
-      {/* Navigation content */}
-      <Box
-        sx={{
-          mt: 4,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      <Container maxWidth="md" sx={{ mt: 8 }}>
         <motion.div initial="hidden" animate="visible" variants={fadeIn}>
-          <Typography variant="h4" sx={{ mb: 4 }}>
-            Welcome to the Flashcard SaaS Platform
+          <Typography variant="h3" align="center" sx={{ mb: 4 }}>
+            Welcome to Memora AI
           </Typography>
         </motion.div>
         <motion.div initial="hidden" animate="visible" variants={slideUp}>
-          <Typography variant="h6" sx={{ mb: 4 }}>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{ mb: 6, color: "#b0bec5" }}
+          >
             Manage and create your flashcards with ease.
           </Typography>
         </motion.div>
-        <Box sx={{ mt: 2 }}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#1DB954",
-              "&:hover": { backgroundColor: "#1aa34a" },
-              mx: 1,
-              px: 3,
-              py: 1.5,
-            }}
-            onClick={() => handleNavigation("/flashcards")}
-          >
-            My Flashcards
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#1DB954",
-              "&:hover": { backgroundColor: "#1aa34a" },
-              mx: 1,
-              px: 3,
-              py: 1.5,
-            }}
-            onClick={() => handleNavigation("/generate")}
-          >
-            Generate Flashcards
-          </Button>
-        </Box>
-      </Box>
+        <Grid container spacing={3} justifyContent="center">
+          <Grid item>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#1DB954",
+                "&:hover": { backgroundColor: "#1aa34a" },
+                px: 4,
+                py: 1.5,
+              }}
+              onClick={() => handleNavigation("/flashcards")}
+            >
+              My Flashcards
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#1DB954",
+                "&:hover": { backgroundColor: "#1aa34a" },
+                px: 4,
+                py: 1.5,
+              }}
+              onClick={() => handleNavigation("/generate")}
+            >
+              Generate Flashcards
+            </Button>
+          </Grid>
+        </Grid>
+      </Container>
 
-      {/* Plan Management */}
-      <Box sx={{ mt: 4, textAlign: "center" }}>
+      <Container maxWidth="md" sx={{ mt: 8 }}>
         <motion.div initial="hidden" animate="visible" variants={fadeIn}>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            Your Current Plan: {currentPlan}
+          <Typography variant="h4" align="center" sx={{ mb: 4 }}>
+            Your Current Plan: {currentPlan || "None"}
           </Typography>
         </motion.div>
         <motion.div initial="hidden" animate="visible" variants={slideUp}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{ mb: 4, color: "#b0bec5" }}
+          >
             Choose a new plan:
           </Typography>
         </motion.div>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
-          <motion.div initial="hidden" animate="visible" variants={slideUp}>
-            <Card
-              sx={{
-                maxWidth: 345,
-                borderRadius: 2,
-                boxShadow: 3,
-                backdropFilter: "blur(10px)",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                "&:hover": { transform: "scale(1.05)" },
-                transition: "transform 0.3s ease-in-out",
-              }}
-            >
-              <CardActionArea onClick={() => handlePlanChange("Basic")}>
-                <CardContent>
-                  <Typography variant="h6">Basic Plan</Typography>
-                  <Typography variant="body2" color="gray">
-                    $5 / month
-                  </Typography>
-                  <Typography variant="body2" color="gray">
-                    Access to basic features
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </motion.div>
-
-          <motion.div initial="hidden" animate="visible" variants={slideUp}>
-            <Card
-              sx={{
-                maxWidth: 345,
-                borderRadius: 2,
-                boxShadow: 3,
-                backdropFilter: "blur(10px)",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                "&:hover": { transform: "scale(1.05)" },
-                transition: "transform 0.3s ease-in-out",
-              }}
-            >
-              <CardActionArea onClick={() => handlePlanChange("Pro")}>
-                <CardContent>
-                  <Typography variant="h6">Pro Plan</Typography>
-                  <Typography variant="body2" color="gray">
-                    $10 / month
-                  </Typography>
-                  <Typography variant="body2" color="gray">
-                    Unlimited features with priority support
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </motion.div>
-        </Box>
-      </Box>
+        <Grid container spacing={4} justifyContent="center">
+          {["Basic", "Pro"].map((plan) => (
+            <Grid item key={plan}>
+              <motion.div initial="hidden" animate="visible" variants={slideUp}>
+                <Card
+                  sx={{
+                    width: 280,
+                    borderRadius: 2,
+                    bgcolor: "rgba(40, 40, 40, 0.95)",
+                    border: "1px solid #333",
+                    "&:hover": { transform: "scale(1.05)" },
+                    transition: "transform 0.3s ease-in-out",
+                  }}
+                >
+                  <CardActionArea onClick={() => handlePlanChange(plan)}>
+                    <CardContent>
+                      <Typography variant="h5" color="#E0E0E0" gutterBottom>
+                        {plan} Plan
+                      </Typography>
+                      <Typography variant="h6" color="#1DB954" gutterBottom>
+                        ${plan === "Basic" ? "5" : "10"} / month
+                      </Typography>
+                      <Typography variant="body2" color="#b0bec5">
+                        {plan === "Basic"
+                          ? "Access to basic features"
+                          : "Unlimited features with priority support"}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
     </Container>
   );
 }
