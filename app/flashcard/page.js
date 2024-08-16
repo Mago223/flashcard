@@ -335,6 +335,9 @@ export default function Flashcard() {
                     input: { color: "white" },
                     label: { color: "#b0bec5" },
                   }}
+                  InputProps={{
+                    style: { color: "white" }, // Text color inside the input field
+                  }}
                 />
                 <TextField
                   value={backTextToEdit}
@@ -344,6 +347,9 @@ export default function Flashcard() {
                   sx={{
                     input: { color: "white" },
                     label: { color: "#b0bec5" },
+                  }}
+                  InputProps={{
+                    style: { color: "white" }, // Text color inside the input field
                   }}
                 />
               </Box>
@@ -422,6 +428,9 @@ export default function Flashcard() {
                     input: { color: "white" },
                     label: { color: "#b0bec5" },
                   }}
+                  InputProps={{
+                    style: { color: "white" }, // Text color inside the input field
+                  }}
                 />
               </Box>
               <Box
@@ -492,6 +501,9 @@ export default function Flashcard() {
                     input: { color: "white" },
                     label: { color: "#b0bec5" },
                   }}
+                  InputProps={{
+                    style: { color: "white" }, // Text color inside the input field
+                  }}
                 />
                 <TextField
                   value={backTextToEdit}
@@ -501,6 +513,9 @@ export default function Flashcard() {
                   sx={{
                     input: { color: "white" },
                     label: { color: "#b0bec5" },
+                  }}
+                  InputProps={{
+                    style: { color: "white" }, // Text color inside the input field
                   }}
                 />
               </Box>
