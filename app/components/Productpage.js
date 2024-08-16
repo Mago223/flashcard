@@ -91,7 +91,7 @@ export default function ProductPage() {
         sx={{ borderBottom: "1px solid #333" }}
       >
         <Typography variant="h6" fontWeight="bold">
-          Memora AI
+          Memora
         </Typography>
         <Box display="flex" alignItems="center" gap={2}>
           <Typography variant="body1" fontWeight="bold">
@@ -114,7 +114,7 @@ export default function ProductPage() {
       <Container maxWidth="md" sx={{ mt: 8 }}>
         <motion.div initial="hidden" animate="visible" variants={fadeIn}>
           <Typography variant="h3" align="center" sx={{ mb: 4 }}>
-            Welcome to Memora AI
+            Welcome to Memora
           </Typography>
         </motion.div>
         <motion.div initial="hidden" animate="visible" variants={slideUp}>
