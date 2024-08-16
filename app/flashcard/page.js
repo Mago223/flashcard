@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/clerk-react";
 import {useEffect, useState} from "react";
-import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Modal, Box, Container, TextField, Typography, Paper, Button, CardActionArea, CardContent, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Card } from "@mui/material";
 
@@ -21,6 +21,8 @@ export default function Flashcard(){
     const [flashcardUpdateTrigger, setFlashcardUpdateTrigger] = useState(0);
 
     const [regenerateOpen, setRegenerateOpen] = useState(false);
+
+    const [addFlashcardOpen, setAddFlashcardOpen] = useState(false);
 
     const searchParams = useSearchParams();
     const search = searchParams.get("id");
@@ -69,19 +71,52 @@ export default function Flashcard(){
         setRegenerateOpen(true);
     }
 
+    const deleteFlashCard = async (flashcard) => {
+        if(!search || !user) return;
+        const colRef = collection(doc(db, "users", user.id), search);
+        const docs = await getDocs(colRef);
+
+        docs.forEach((doc) => {
+            if (doc.id === flashcard.id){
+                deleteDoc(doc.ref);
+                setFlashcardUpdateTrigger(prev => prev + 1);
+            }
+        })
+    }
+
+    const addFlashcard = async () => {
+        setAddFlashcardOpen(true);
+    }
+
     const handleRegenerateCloseCancel = () => {
         setRegenerateOpen(false);
     }
 
     const handleRegenerateCloseSave = async () => {
         setRegenerateOpen(false);
+        setAddFlashcardOpen(false);
 
         if(!search || !user) return;
         const colRef = collection(doc(db, "users", user.id), search);
         const docs = await getDocs(colRef);
 
         for (const doc of docs.docs) {
-            if (doc.id === currentFlashcard.id){
+            if (currentFlashcard == null){
+                const generatedFlashcard = await fetch('api/generate_one', {
+                    method: 'POST',
+                    body: frontTextToEdit
+                })
+                .then((res)=>res.json())
+
+                await addDoc(colRef, {
+                    front: generatedFlashcard[0].front,
+                    back: generatedFlashcard[0].back
+                })
+
+                setFlashcardUpdateTrigger(prev => prev + 1);
+                return;
+            }
+            else if (doc.id === currentFlashcard.id){
                 const generatedFlashcard = await fetch('api/generate_one', {
                     method: 'POST',
                     body: frontTextToEdit
@@ -121,10 +156,60 @@ export default function Flashcard(){
         }
     };
 
+    const handleAddFlashcardCloseCancel = () => {
+        setAddFlashcardOpen(false);
+    }
+
+    const handleAddFlashcardCloseSave = async () => {
+        setAddFlashcardOpen(false);
+
+        if(!search || !user) return;
+        const colRef = collection(doc(db, "users", user.id), search);
+
+        await addDoc(colRef, {
+            front: frontTextToEdit,
+            back: backTextToEdit
+        })
+
+        setFlashcardUpdateTrigger(prev => prev + 1);
+    }
+
     if (!isLoaded || !isSignedIn) return <></>;
 
     return (
         <Container maxWidth="100vw">
+            <Modal
+                open={addFlashcardOpen}
+                onClose={handleAddFlashcardCloseCancel}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                  <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                }}
+                >
+                    <Box display="flex" alignItems={"center"} flexDirection={"column"} gap={2} sx={{mb: -2}}>
+                        <Box gap={2} display="flex" flexDirection={"row"} justifyContent={"flex-start"} alignItems={"center"}>
+                            <TextField value={frontTextToEdit} onChange={(e) => setFrontTextToEdit(e.target.value)} label="Edit Front" multiline />
+                            <TextField value={backTextToEdit} onChange={(e) => setBackTextToEdit(e.target.value)} label="Edit Back" multiline />
+                        </Box>
+                        <Box gap={2} display="flex" flexDirection={"row"} justifyContent={"flex-start"} alignItems={"center"}>
+                            <Button variant="contained" onClick={handleAddFlashcardCloseCancel}>Cancel</Button>
+                            <Button variant="contained" onClick={handleAddFlashcardCloseSave}>Save</Button>
+                            <Button variant="contained" onClick={() => regenerateFlashcard(null)}>Regenerate</Button>
+                        </Box>
+                    </Box>
+                </Box>
+            </Modal>
             <Modal
                 open={regenerateOpen}
                 onClose={handleRegenerateCloseCancel}
@@ -186,6 +271,9 @@ export default function Flashcard(){
                     </Box>
                 </Box>
             </Modal>
+            <Button variant="contained" color="primary" onClick={addFlashcard} sx={{position: 'absolute', top:"1%", left: "44%"}}>
+                Add Flashcard
+            </Button>
             <Grid container spacing={3} sx={{mt: 4}}>
                     {flashcards.map((flashcard, index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
@@ -247,6 +335,9 @@ export default function Flashcard(){
                                     </Button>
                                     <Button variant="contained" sx={{ mb: 2 }} onClick={() => regenerateFlashcard(flashcard)}>
                                         Regenerate
+                                    </Button>
+                                    <Button variant="contained" sx={{ mb: 2 }} onClick={() => deleteFlashCard(flashcard)}>
+                                        Delete
                                     </Button>
                                 </Box>
                             </Card>
