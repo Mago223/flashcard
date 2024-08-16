@@ -40,16 +40,16 @@ Please do not include any extra newlines or words. Only return all flashcards as
 export async function POST(req) {
   try {
     const user_message = await req.text();
-          console.log(user_message)
+    console.log(user_message)
     const modelId = "meta.llama3-8b-instruct-v1:0";
 
     const prompt = `
-          <|begin_of_text|><|start_header_id|>system<|end_header_id|>
-          ${systemPrompt}
-          <|eot_id|>
-
+  
           <|start_header_id|>user<|end_header_id|>
           ${user_message}
+          <|eot_id|>
+          <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+          ${systemPrompt}
           <|eot_id|>
           <|start_header_id|>assistant<|end_header_id|>
           `;
@@ -59,7 +59,7 @@ export async function POST(req) {
         body: JSON.stringify({
           prompt,
           max_gen_len: 2048,
-          temperature: 0.7,
+          temperature: 0.9,
           top_p: 0.9,
         }),
         modelId
@@ -68,6 +68,7 @@ export async function POST(req) {
 
     const responseBody = JSON.parse(new TextDecoder().decode(response.body));
     const content = JSON.parse(responseBody.generation)
+
     return NextResponse.json(content.flashcards);
   } catch (error) {
     console.error("Error processing request:", error);
