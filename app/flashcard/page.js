@@ -28,6 +28,16 @@ export default function Flashcard(){
 
     const [addFlashcardOpen, setAddFlashcardOpen] = useState(false);
 
+    const [testOpen, setTestOpen] = useState(false);
+    const [questions, setQuestions] = useState([]);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    // const [selectedAnswer, setSelectedAnswer] = useState("");
+    const [uiScore, setuiScore] = useState(0);
+    const [uiLength, setuiLength] = useState(0);
+    const [score, setScore] = useState(0);
+    const [testCompleted, setTestCompleted] = useState(false);
+
+
     const searchParams = useSearchParams();
     const search = searchParams.get("id");
 
@@ -197,6 +207,47 @@ export default function Flashcard(){
         setFlashcardUpdateTrigger(prev => prev + 1);
     }
 
+    const startTest = () => {
+        if (flashcards.length < 1) {
+            alert('No flashcards available for testing.');
+            return;
+        }
+        // Prepare questions for the test
+        const preparedQuestions = flashcards.map(card => {
+            const allOptions = [...flashcards.map(f => f.back), card.back];
+            const shuffleOptions = allOptions.sort(() => 0.5 - Math.random()).slice(0, 4);
+            return {
+                question: card.front,
+                options: shuffleOptions,
+                correctAnswer: card.back
+            };
+        });
+        setQuestions(preparedQuestions);
+        setTestOpen(true);
+        setTestCompleted(false);
+        setuiLength(preparedQuestions.length);
+    }
+
+    const handleTestClose = () => {
+        setTestOpen(false);
+        setQuestions([]);
+        setCurrentQuestionIndex(0);
+        setScore(0);
+        setTestCompleted(false);
+    }
+
+    const handleAnswerClick = (answer) => {
+        if (answer === questions[currentQuestionIndex].correctAnswer) {
+            setScore(prev => prev + 1);
+            setuiScore(prev => prev + 1)
+        }
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
+        } else {
+            setTestCompleted(true);
+        }
+    }
+
     if (loading) {
       return <Spinner />;
     }
@@ -297,9 +348,74 @@ export default function Flashcard(){
                     </Box>
                 </Box>
             </Modal>
-            <Button variant="contained" color="primary" onClick={addFlashcard} sx={{position: 'absolute', top:"1%", left: "44%"}}>
-                Add Flashcard
-            </Button>
+
+            {/* Test Modal */}
+            <Modal
+                open={testOpen}
+                onClose={handleTestClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '400',
+                        bgcolor: 'background.paper',
+                        border: '1px solid #333',
+                        boxShadow: 24,
+                        p: 4,
+                    }}
+                >
+                    <Box display="flex" flexDirection={"column"} alignItems={"center"}>
+                        {testCompleted ? (
+                            <Typography variant="h6">Test Completed! Your score: {score} / {questions.length}</Typography>
+                        ) : (
+                            <>
+                                <Typography variant="h6" sx={{ mb: 2 }}>{questions[currentQuestionIndex]?.question}</Typography>
+                                <Box sx={{ mb: 2 }}>
+                                    {questions[currentQuestionIndex]?.options.map((option, idx) => (
+                                        <Button
+                                            key={idx}
+                                            variant="outlined"
+                                            onClick={() => handleAnswerClick(option)}
+                                            sx={{ display: 'block', mb: 1 }}
+                                        >
+                                            {option}
+                                        </Button>
+                                    ))}
+                                </Box>
+                            </>
+                        )}
+                    </Box>
+                </Box>
+            </Modal>
+
+            <Box 
+                display={'flex'} 
+                justifyContent={'center'}
+                alignItems={'center'}
+                pt={2}
+                gap={2}
+            >
+                <Button variant="contained" color="primary" onClick={addFlashcard} 
+                    // sx={{position: 'absolute', top:"1%", left: "44%"}}
+                >
+                    Add Flashcard
+                </Button>
+                <Button variant="contained" color="primary" onClick={startTest} 
+                    // sx={{ position: 'absolute', top: "5%", left: "44%" }}
+                >
+                    Test Yourself
+                </Button>
+                
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                    Your last test score: {uiScore} / {uiLength}
+                </Typography>
+                
+            </Box>
             <Grid container spacing={3} sx={{mt: 4}}>
                     {flashcards.map((flashcard, index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
