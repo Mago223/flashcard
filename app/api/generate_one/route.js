@@ -1,5 +1,12 @@
+import {
+  BedrockRuntimeClient,
+  InvokeModelCommand,
+} from "@aws-sdk/client-bedrock-runtime";
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+
+const client = new BedrockRuntimeClient({
+  region: "us-east-1",
+});
 
 const systemPrompt = `
 You are an AI assistant specialized in creating educational flash cards. Your primary function is to take information provided by users and convert it into concise, effective flash cards for study and memorization. You should:
@@ -26,22 +33,47 @@ Return in the following JSON format:
         }
     ]
 }
+
+Please do not include any extra newlines or words. Only return the flashcard as shown above.
 `;
 
 export async function POST(req) {
-  const openai = new OpenAI();
-  const data = await req.text();
+  try {
+    const user_message = await req.text();
+          console.log(user_message)
+    const modelId = "meta.llama3-8b-instruct-v1:0";
 
-  const completion = await openai.chat.completions.create({
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: data },
-    ],
-    model: "gpt-4o",
-    response_format: { type: "json_object" },
-  });
+    const prompt = `
+          <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+          ${systemPrompt}
+          <|eot_id|>
 
-  const flashcards = JSON.parse(completion.choices[0].message.content);
+          <|start_header_id|>user<|end_header_id|>
+          ${user_message}
+          <|eot_id|>
+          <|start_header_id|>assistant<|end_header_id|>
+          `;
 
-  return NextResponse.json(flashcards.flashcards);
+    const response = await client.send(
+      new InvokeModelCommand({
+        body: JSON.stringify({
+          prompt,
+          max_gen_len: 2048,
+          temperature: 0.7,
+          top_p: 0.9,
+        }),
+        modelId
+      })
+    );
+
+    const responseBody = JSON.parse(new TextDecoder().decode(response.body));
+    const content = JSON.parse(responseBody.generation)
+    return NextResponse.json(content.flashcards);
+  } catch (error) {
+    console.error("Error processing request:", error);
+    return NextResponse.json(
+      { error: "Error processing your request" },
+      { status: 500 }
+    );
+  }
 }

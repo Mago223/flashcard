@@ -53,7 +53,7 @@ export default function Generate() {
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [auth, router]);
 
   const handleFileUpload = async () => {
     const file = document.querySelector("input[type=file]").files[0];

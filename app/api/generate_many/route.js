@@ -33,18 +33,21 @@ Return in the following JSON format:
         }
     ]
 }
+
+Please do not include any extra newlines or words. Only return all flashcards as shown above.
 `;
 
 export async function POST(req) {
   try {
     const user_message = await req.text();
+          console.log(user_message)
     const modelId = "meta.llama3-8b-instruct-v1:0";
 
     const prompt = `
           <|begin_of_text|><|start_header_id|>system<|end_header_id|>
           ${systemPrompt}
           <|eot_id|>
-          
+
           <|start_header_id|>user<|end_header_id|>
           ${user_message}
           <|eot_id|>
@@ -59,16 +62,13 @@ export async function POST(req) {
           temperature: 0.7,
           top_p: 0.9,
         }),
-        modelId,
-        contentType: "application/json",
-        accept: "application/json",
+        modelId
       })
     );
 
     const responseBody = JSON.parse(new TextDecoder().decode(response.body));
-    const flashcards = JSON.parse(responseBody.generation);
-
-    return NextResponse.json(flashcards.flashcards);
+    const content = JSON.parse(responseBody.generation)
+    return NextResponse.json(content.flashcards);
   } catch (error) {
     console.error("Error processing request:", error);
     return NextResponse.json(

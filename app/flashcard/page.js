@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState} from "react";
+import {useEffect, useState, Suspense} from "react";
 import { collection, doc, getDoc, getDocs, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
 import { db, auth } from "@/firebase";
 import { Modal, Box, Container, TextField, Typography, Paper, Button, CardActionArea, CardContent, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Card } from "@mui/material";
@@ -202,6 +202,7 @@ export default function Flashcard(){
     }
 
     return (
+        <>
         <Container maxWidth="100vw">
             <Modal
                 open={addFlashcardOpen}
@@ -370,5 +371,6 @@ export default function Flashcard(){
                     ))}
             </Grid>
         </Container>
+        </>
     )
 }
