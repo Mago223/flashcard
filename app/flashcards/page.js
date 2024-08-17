@@ -55,6 +55,10 @@ export default function Flashcards() {
     }
   }, [user]);
 
+  const goHome = () => {
+    router.push("/");
+  }
+
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
@@ -106,9 +110,11 @@ export default function Flashcards() {
         p={2}
         sx={{ borderBottom: "1px solid #333" }}
       >
-        <Typography variant="h6" fontWeight="bold">
-          Memora
-        </Typography>
+        <Button onClick={goHome} style={{ textTransform: 'none', padding: 0 }} sx={{ color: 'white' }}>
+          <Typography variant="h6" fontWeight="bold">
+            Memora
+          </Typography>
+        </Button>
         <Box display="flex" alignItems="center" gap={2}>
           <Typography variant="body1" fontWeight="bold">
             {fullName}

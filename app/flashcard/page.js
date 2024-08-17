@@ -65,6 +65,10 @@ export default function Flashcard() {
   const searchParams = useSearchParams();
   const search = searchParams.get("id");
 
+  const goHome = () => {
+    router.push("/");
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -603,6 +607,12 @@ export default function Flashcard() {
             </Box>
           </Box>
         </Modal>
+
+        <Button onClick={goHome} style={{ textTransform: 'none', padding: 0 }} sx={{ color: 'white' }}>
+          <Typography variant="h6" fontWeight="bold">
+            Memora
+          </Typography>
+        </Button>
 
         <Box
           display="flex"

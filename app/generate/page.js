@@ -44,6 +44,10 @@ export default function Generate() {
   const auth = getAuth();
   const [userPlan, setUserPlan] = useState("No Plan");
 
+  const goHome = () => {
+    router.push("/");
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -204,6 +208,11 @@ export default function Generate() {
         py: 4,
       }}
     >
+        <Button onClick={goHome} style={{ textTransform: 'none', padding: 0, position: 'absolute', top: '3%', left: '1%'}} sx={{ color: 'white' }}>
+          <Typography variant="h6" fontWeight="bold">
+            Memora
+          </Typography>
+        </Button>
       <Container maxWidth="md">
         <motion.div initial="hidden" animate="visible" variants={fadeIn}>
           <Typography
