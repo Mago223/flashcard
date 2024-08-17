@@ -42,13 +42,22 @@ export default function Generate() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const auth = getAuth();
+  const [userPlan, setUserPlan] = useState("No Plan");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push("/signin");
+      } else {
+        setUser(user);
+        // Fetch user's plan from Firestore
+        const userDoc = await getDoc(doc(db, "userPlans", user.uid));
+        if (userDoc.exists()) {
+          setUserPlan(userDoc.data().plan);
+        } else {
+          setUserPlan("No Plan");
+        }
       }
-      setUser(user);
       setLoading(false);
     });
 
@@ -60,6 +69,10 @@ export default function Generate() {
 
     if (!file) {
       alert("No file selected!");
+      return;
+    }
+    if (file.type === "application/pdf" && userPlan !== "Pro") {
+      alert("PDF upload is only available for Pro users. Please upgrade your plan.");
       return;
     }
 
@@ -148,7 +161,10 @@ export default function Generate() {
     handleClose();
     router.push("/flashcards");
   };
-
+  const handleUpgradePrompt = () => {
+    alert("This feature is only available for Pro users. Please upgrade your plan to access PDF uploads.");
+    // Optionally, you could redirect to a pricing page or open a modal here
+  };
   if (loading) {
     return (
       <Box
@@ -253,21 +269,30 @@ export default function Generate() {
               style={{ display: "none" }}
               onChange={handleFileUpload}
             />
-            <Button
-              variant="outlined"
-              onClick={() => document.getElementById("fileInput").click()}
-              fullWidth
-              sx={{
-                color: "#1DB954",
-                borderColor: "#1DB954",
-                "&:hover": {
-                  borderColor: "#1aa34a",
-                  backgroundColor: "rgba(29, 185, 84, 0.1)",
-                },
-              }}
-            >
-              Upload File
-            </Button>
+<Button
+  variant="outlined"
+  onClick={() => userPlan === "Pro" ? document.getElementById("fileInput").click() : handleUpgradePrompt()}
+  fullWidth
+  sx={{
+    color: userPlan === "Pro" ? "#1DB954" : "#b0bec5",
+    borderColor: userPlan === "Pro" ? "#1DB954" : "#b0bec5",
+    backgroundColor: "transparent", 
+    cursor: userPlan === "Pro" ? "pointer" : "not-allowed", 
+    "&:hover": userPlan === "Pro"
+      ? {
+          borderColor: "#1aa34a",
+          backgroundColor: "rgba(29, 185, 84, 0.1)",
+        }
+      : {
+          borderColor: "#b0bec5", 
+        },
+    transition: "all 0.3s ease",
+  }}
+>
+  {userPlan === "Pro" ? "Upload File" : "Upgrade to Pro to Upload PDFs"}
+</Button>
+
+
           </Paper>
         </motion.div>
 
