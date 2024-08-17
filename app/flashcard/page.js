@@ -64,21 +64,32 @@ export default function Flashcard() {
 
   const searchParams = useSearchParams();
   const search = searchParams.get("id");
+  const [userPlan, setUserPlan] = useState("Basic");
+
 
   const goHome = () => {
     router.push("/");
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         router.push("/signin");
         return;
       }
       setUser(user);
+      
+      // Fetch user's plan
+      const userPlanDoc = await getDoc(doc(db, "userPlans", user.uid));
+      if (userPlanDoc.exists()) {
+        setUserPlan(userPlanDoc.data().plan);
+      } else {
+        setUserPlan("Basic");
+      }
+      
       setLoading(false);
     });
-
+  
     return () => unsubscribe();
   }, [router]);
 
@@ -128,6 +139,10 @@ export default function Flashcard() {
   };
 
   const regenerateFlashcard = async (flashcard) => {
+    if (userPlan !== "Pro") {
+      alert("Regenerating flashcards is a Pro-only feature. Please upgrade your plan to access this functionality.");
+      return;
+    }
     setCurrentFlashcard(flashcard);
     setRegenerateOpen(true);
   };
@@ -380,8 +395,18 @@ export default function Flashcard() {
                 </Button>
                 <Button
                   variant="contained"
-                  onClick={() => regenerateFlashcard(null)}
-                  sx={{ bgcolor: "#1DB954", "&:hover": { bgcolor: "#1aa34a" } }}
+                  onClick={() => {
+                    if (userPlan !== "Pro") {
+                      alert("Generating flashcards is a Pro-only feature. Please upgrade your plan to access this functionality.");
+                    } else {
+                      regenerateFlashcard(null);
+                    }
+                  }}
+                  sx={{ 
+                    bgcolor: "#1DB954", 
+                    "&:hover": { bgcolor: "#1aa34a" },
+                    opacity: userPlan === "Pro" ? 1 : 0.2,
+                  }}
                 >
                   Generate
                 </Button>
@@ -737,6 +762,7 @@ export default function Flashcard() {
                         mb: 2,
                         bgcolor: "#1DB954",
                         "&:hover": { bgcolor: "#1aa34a" },
+                        opacity: userPlan === "Pro" ? 1 : 0.2,
                       }}
                       onClick={() => regenerateFlashcard(flashcard)}
                     >

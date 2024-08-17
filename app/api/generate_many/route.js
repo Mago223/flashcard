@@ -2,10 +2,12 @@ import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
+import { fromEnv } from "@aws-sdk/credential-providers";
 import { NextResponse } from "next/server";
 
 const client = new BedrockRuntimeClient({
   region: "us-east-1",
+  credentials: fromEnv()
 });
 
 const systemPrompt = `
