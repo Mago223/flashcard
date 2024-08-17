@@ -11,9 +11,10 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { motion } from "framer-motion";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function ProductPage() {
   const [currentPlan, setCurrentPlan] = useState("");
@@ -25,27 +26,35 @@ export default function ProductPage() {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // TODO: Fetch current plan in async function
-        const plan = "";
-        setCurrentPlan(plan);
         setFullName(user.displayName || "User");
+        // Fetch user's plan from Firestore
+        const userDoc = await getDoc(doc(db, "userPlans", user.uid));
+        if (userDoc.exists()) {
+          setCurrentPlan(userDoc.data().plan);
+        } else {
+          setCurrentPlan("No Plan");
+        }
       } else {
         router.push("/signin");
       }
     });
-
-    // TODO: Call async function
 
     return () => unsubscribe();
   }, [router]);
 
   const handlePlanChange = async (newPlan) => {
     try {
-      // TODO: update plan via API
-      setCurrentPlan(newPlan);
-      alert("Plan updated successfully");
+      const user = auth.currentUser;
+      if (user) {
+        // Update plan in Firestore
+        await setDoc(doc(db, "userPlans", user.uid), { plan: newPlan });
+        setCurrentPlan(newPlan);
+        alert("Plan updated successfully");
+      } else {
+        throw new Error("User not logged in");
+      }
     } catch (error) {
       console.error("Error updating plan:", error);
       alert("Failed to update plan");
