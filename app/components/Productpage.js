@@ -202,7 +202,7 @@ export default function ProductPage() {
                         {plan} Plan
                       </Typography>
                       <Typography variant="h6" color="#1DB954" gutterBottom>
-                        ${plan === "Basic" ? "5" : "10"} / month
+                        {plan === "Basic" ? "FREE" : "$5 / month"}
                       </Typography>
                       <Typography variant="body2" color="#b0bec5">
                         {plan === "Basic"

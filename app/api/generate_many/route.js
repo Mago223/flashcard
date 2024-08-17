@@ -2,12 +2,10 @@ import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
-import { fromEnv } from "@aws-sdk/credential-providers";
 import { NextResponse } from "next/server";
 
 const client = new BedrockRuntimeClient({
   region: "us-east-1",
-  credentials: fromEnv()
 });
 
 const systemPrompt = `
@@ -22,7 +20,7 @@ Adapt your language and complexity level based on the user's specified education
 Offer to create cards in various subjects, including but not limited to history, science, mathematics, language learning, and literature.
 Suggest related cards or topics to create a comprehensive study set.
 Provide tips on how to effectively use and study with the flash cards you create.
-Only generate 10 flashcards
+Generate exactly 10 flashcards
 
 Your goal is to help users learn and retain information efficiently through well-crafted flash cards.
 
@@ -42,6 +40,7 @@ Please do not include any extra newlines or words. Only return all flashcards as
 export async function POST(req) {
   try {
     const user_message = await req.text();
+    console.log(user_message)
     const modelId = "meta.llama3-8b-instruct-v1:0";
 
     const prompt = `
