@@ -40,7 +40,6 @@ Please do not include any extra newlines or words. Only return all flashcards as
 export async function POST(req) {
   try {
     const user_message = await req.text();
-    console.log(user_message)
     const modelId = "meta.llama3-8b-instruct-v1:0";
 
     const prompt = `

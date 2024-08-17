@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 function Signup() {
   const [fullName, setFullName] = useState("");
@@ -44,6 +45,35 @@ function Signup() {
         setError(error.message);
       });
   };
+
+const provider = new GoogleAuthProvider();
+
+function signInWithGoogle() {
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      console.log("Sign-in successful: ", result);
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+
+      // The signed-in user info.
+      const user = result.user;
+      console.log("User signed in: ", user);
+    })
+    .then(() => {
+      router.push("/");
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      console.error("Error during sign-in: ", errorCode, errorMessage, email, credential);
+    });
+}
 
   return (
     <Box
@@ -221,6 +251,26 @@ function Signup() {
             >
               Sign Up
             </Button>
+            <Button id="google-signin" onClick={signInWithGoogle}
+            type="submit"
+            fullWidth
+            variant="contained"
+            component={motion.button}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            sx={{
+              borderRadius: "20px",
+              backgroundColor: "#1DB954",
+              "&:hover": {
+                backgroundColor: "#1aa34a",
+              },
+              padding: "12px",
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+              mt: 3,
+              mb: 2,
+            }}
+            >Sign up with Google</Button>
             <Grid container justifyContent="center">
               <Grid item>
                 <Typography variant="body1" color="#b0bec5">
